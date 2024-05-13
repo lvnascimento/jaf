@@ -8,6 +8,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import br.edu.leonardo.jaf.sensors.NotificationListener;
+import br.edu.leonardo.jaf.sensors.Sensor;
+import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorNotification;
+
 /**
  * An agent in the platform.
  *
@@ -73,14 +78,14 @@ public class Agent {
      */
     public void addSensor(Sensor sensor) {
         if(!sensors.containsKey(sensor)) {
-            NotificationObserver obs = new NotificationObserver() {
+            NotificationListener obs = new NotificationListener() {
                 @Override
                 public void notify(SensorNotification notification) {
                     notifyNewSensorReading(notification);
                 }
             };
             sensors.put(sensor, new SensorEntry(sensor));
-            sensor.addObserver(obs);
+            sensor.addListener(obs);
         }
     }
 
@@ -101,9 +106,50 @@ public class Agent {
         entry.addRelatedProcess(p);
     }
 
+    /**
+     * This method initializes an Agent. The method "setup" is executed and all sensors in the agent
+     * are initialized (the method "init" of each sensor is invoked).
+     *
+     * @throws AgentException If an error occurred during the agent initialization.
+     */
+    public void init() throws AgentException {
+        try {
+            setup();
+            initializeSensors();
+        } catch (SensorInitializationException ex) {
+            throw new AgentException(
+                    "It is not possible to initialize the agent because an error occurred during sensor initialization.",
+                    ex
+            );
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // P R O T E C T E D   M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * This method should be overridden by subclasses to implement specific initialization code. This
+     * method is invoked once, when the agent is initialized.
+     * @throws AgentException
+     */
+    protected void setup() throws AgentException {
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // P R I V A T E   M E T H O D S
     ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * This internal method initialize all sensors added to this agent.
+     *
+     * @throws SensorInitializationException If an error occurred during a sensor initialization.
+     */
+    private void initializeSensors() throws SensorInitializationException {
+        for(Sensor s : sensors.keySet()) {
+            s.init();
+        }
+    }
 
     /**
      * The agent uses this internal method to process a new notification received from a sensor.
@@ -181,7 +227,7 @@ public class Agent {
      * The map of future objects used to interact with the threads used to execute each process in
      * the agent.
      */
-    private final Map<Process, Future<?>> processesThreads = new HashMap<>();
+    private Map<Process, Future<?>> processesThreads = new HashMap<>();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // P R I V A T E   I N T E R N A L   C L A S S E S

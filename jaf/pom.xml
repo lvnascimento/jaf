@@ -5,6 +5,13 @@
     <artifactId>jaf</artifactId>
     <version>0.2</version>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>tec.units</groupId>
+            <artifactId>unit-ri</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+    </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>

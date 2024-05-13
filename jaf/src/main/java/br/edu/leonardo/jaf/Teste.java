@@ -1,8 +1,12 @@
 package br.edu.leonardo.jaf;
 
+import br.edu.leonardo.jaf.sensors.Sensor;
+import br.edu.leonardo.jaf.sensors.SensorNotification;
+import br.edu.leonardo.jaf.sensors.SingleSensorValue;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import tec.units.ri.AbstractUnit;
 
 /**
  *
@@ -28,7 +32,7 @@ public class Teste {
         sensor2.stop();
     }
     
-    private static class SensorA extends Sensor<Integer> {
+    private static class SensorA extends Sensor {
         Timer timer;
         long delay;
 
@@ -36,12 +40,13 @@ public class Teste {
             this.delay = delay;
         }
         
+        @Override
         public void init() {
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    newReading((int)(Math.random()*100));
+                    newReading(new SingleSensorValue((int)(Math.random()*100), AbstractUnit.ONE));
                 }
             }, new Date(), delay);
         }
