@@ -107,21 +107,35 @@ public class Agent {
     }
 
     /**
-     * This method initializes an Agent. The method "setup" is executed and all sensors in the agent
+     * This method initializes an Agent. The method "setup" is executed and,
+     * if the initSensors argument is true, all sensors in the agent
      * are initialized (the method "init" of each sensor is invoked).
      *
+     * @param initSensors true if all sensors in the agent should be initialized;
+     *                    false otherwise.
      * @throws AgentException If an error occurred during the agent initialization.
      */
-    public void init() throws AgentException {
+    public void init(boolean initSensors) throws AgentException {
         try {
             setup();
-            initializeSensors();
+            if(initSensors)
+                initializeSensors();
         } catch (SensorInitializationException ex) {
             throw new AgentException(
                     "It is not possible to initialize the agent because an error occurred during sensor initialization.",
                     ex
             );
         }
+    }
+    
+    /**
+     * This method initializes an Agent. The method "setup" is executed and all sensors in the agent
+     * are initialized (the method "init" of each sensor is invoked).
+     *
+     * @throws AgentException If an error occurred during the agent initialization.
+     */
+    public void init() throws AgentException {
+        this.init(true);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
