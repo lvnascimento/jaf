@@ -1,0 +1,3 @@
+Broker: https://accounts.emqx.com/signin?continue=https%3A%2F%2Fcloud-intl.emqx.com%2Fconsole%2F
+
+Cliente: http://cloud-tools.emqx.com/?host=bfe11f14.ala.eu-central-1.emqxsl.com&port=8084&version=serverless&lang=en
