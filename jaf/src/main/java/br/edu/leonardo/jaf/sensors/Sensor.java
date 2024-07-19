@@ -18,9 +18,9 @@ public abstract class Sensor {
     /**
      * This method must initialize the sensor object. It must be implemented in concrete subclasses
      *
-     * @throws SensorInitializationException If an error occurred during sensor initialization.
+     * @throws SensorException If an error occurred during sensor initialization.
      */
-    public abstract void init() throws SensorInitializationException;
+    public abstract void init() throws SensorException;
 
     /**
      * This method adds a new listener to this sensor. A listener will listen for notifications.
@@ -47,6 +47,20 @@ public abstract class Sensor {
         for (NotificationListener obs : observers) {
             obs.notify(notif);
         }
+    }
+    
+    /**
+     * This method reports a fatal error related to the sensors and forces all registered listeners
+     * to stop notifying. The method <code>onFatalError</code> of all registered listeners is called
+     * before removing them.
+     * 
+     * @param exception The exception related to the reported error.  
+     */
+    protected void reportFatalError(Throwable exception) {
+        for(NotificationListener listener : observers) {
+            listener.onFatalError(new SensorException(this, exception));
+        }
+        observers.clear();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////

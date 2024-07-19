@@ -10,7 +10,7 @@ import java.util.concurrent.Future;
 
 import br.edu.leonardo.jaf.sensors.NotificationListener;
 import br.edu.leonardo.jaf.sensors.Sensor;
-import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorException;
 import br.edu.leonardo.jaf.sensors.SensorNotification;
 
 /**
@@ -83,6 +83,12 @@ public class Agent {
                 public void notify(SensorNotification notification) {
                     notifyNewSensorReading(notification);
                 }
+
+                @Override
+                public void onFatalError(SensorException exception) {
+                    sensors.remove(sensor);
+                    onRemoveSensor(exception);
+                }
             };
             sensors.put(sensor, new SensorEntry(sensor));
             sensor.addListener(obs);
@@ -120,7 +126,7 @@ public class Agent {
             setup();
             if(initSensors)
                 initializeSensors();
-        } catch (SensorInitializationException ex) {
+        } catch (SensorException ex) {
             throw new AgentException(
                     "It is not possible to initialize the agent because an error occurred during sensor initialization.",
                     ex
@@ -145,9 +151,19 @@ public class Agent {
     /**
      * This method should be overridden by subclasses to implement specific initialization code. This
      * method is invoked once, when the agent is initialized.
-     * @throws AgentException
+     * 
+     * @throws AgentException If an error occurred during initialization process.
      */
     protected void setup() throws AgentException {
+    }
+    
+    /**
+     * This method should be overridden by subclasses to implement specific actions when a sensor stops
+     * working. 
+     * 
+     * @param exception The error that caused the sensor to stop.
+     */
+    protected void onRemoveSensor(SensorException exception) { 
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,9 +173,9 @@ public class Agent {
     /**
      * This internal method initialize all sensors added to this agent.
      *
-     * @throws SensorInitializationException If an error occurred during a sensor initialization.
+     * @throws SensorException If an error occurred during a sensor initialization.
      */
-    private void initializeSensors() throws SensorInitializationException {
+    private void initializeSensors() throws SensorException {
         for(Sensor s : sensors.keySet()) {
             s.init();
         }

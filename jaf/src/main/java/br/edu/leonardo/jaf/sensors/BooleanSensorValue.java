@@ -34,6 +34,17 @@ public class BooleanSensorValue implements SensorValue {
         return value;
     }
     
+    /**
+     * This method obtains an instance of the BooleanSensorValue related to the given boolean
+     * value.
+     * 
+     * @param value The boolean value.
+     * @return The object reference.
+     */
+    public static BooleanSensorValue getInstance(boolean value) {
+        return value ? TRUE : FALSE;
+    }
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // P R I V A T E   C O N S T R U C T O R S
     ///////////////////////////////////////////////////////////////////////////////////////////////
