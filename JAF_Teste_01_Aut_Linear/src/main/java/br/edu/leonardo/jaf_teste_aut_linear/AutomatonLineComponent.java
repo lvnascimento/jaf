@@ -1,7 +1,7 @@
 package br.edu.leonardo.jaf_teste_aut_linear;
 
 import br.edu.leonardo.jaf.AgentException;
-import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorException;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -74,7 +74,7 @@ public class AutomatonLineComponent extends JComponent {
     public void init() {
         try {
             automata.init();
-        } catch (SensorInitializationException | AgentException ex) {
+        } catch (SensorException | AgentException ex) {
             ex.printStackTrace();
         }
     }

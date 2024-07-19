@@ -1,7 +1,7 @@
 package br.edu.leonardo.jaf_teste_aut_linear;
 
 import br.edu.leonardo.jaf.sensors.Sensor;
-import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorException;
 import br.edu.leonardo.jaf.sensors.SensorValue;
 import java.time.Duration;
 import java.time.Instant;
@@ -35,7 +35,7 @@ public class IterationSensor extends Sensor {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void init() throws SensorInitializationException {
+    public void init() throws SensorException {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

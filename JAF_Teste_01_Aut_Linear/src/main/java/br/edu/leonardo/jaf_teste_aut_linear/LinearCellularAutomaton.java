@@ -1,7 +1,7 @@
 package br.edu.leonardo.jaf_teste_aut_linear;
 
 import br.edu.leonardo.jaf.AgentException;
-import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,10 +63,10 @@ public abstract class LinearCellularAutomaton<T> {
      * This method initializes the automaton. The onUpdate method is executed, all cell agents
      * are initializes, and the iteration sensor of the automaton is initialized too.
      * 
-     * @throws SensorInitializationException If an error occured during sensor initialization.
+     * @throws SensorException If an error occured during sensor initialization.
      * @throws AgentException If an error occurred during agent initialization.
      */
-    public void init() throws SensorInitializationException, AgentException {
+    public void init() throws SensorException, AgentException {
         onUpdate();
         for(CellAgent c : cells) {
             c.init(false);
