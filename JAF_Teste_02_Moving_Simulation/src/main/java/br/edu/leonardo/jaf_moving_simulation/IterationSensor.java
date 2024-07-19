@@ -2,7 +2,7 @@ package br.edu.leonardo.jaf_moving_simulation;
 
 import br.edu.leonardo.jaf.sensors.BooleanSensorValue;
 import br.edu.leonardo.jaf.sensors.Sensor;
-import br.edu.leonardo.jaf.sensors.SensorInitializationException;
+import br.edu.leonardo.jaf.sensors.SensorException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
@@ -40,7 +40,7 @@ public class IterationSensor extends Sensor {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void init() throws SensorInitializationException {
+    public void init() throws SensorException {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
