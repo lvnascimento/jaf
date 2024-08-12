@@ -1,6 +1,7 @@
 package br.edu.leonardo.jaf_teste_03_iot_mqtt;
 
 import br.edu.leonardo.jaf.Agent;
+import br.edu.leonardo.jaf.Behaviour;
 import br.edu.leonardo.jaf.net.SSLUtils;
 import br.edu.leonardo.jaf.net.mqtt.MqttClientConnection;
 import br.edu.leonardo.jaf.sensors.BooleanSensorValue;
@@ -58,25 +59,25 @@ public class Main {
                         MainWindow frame = new MainWindow();
                         
                         // Add sensors to the agent
-                        agent1.addProcess(new br.edu.leonardo.jaf.Process() {
+                        agent1.addBehaviour(new Behaviour() {
                             @Override
                             public void execute(SensorNotification notification) {
                                 frame.updateAlphaParkInfo((KhompNITZSensorValue)notification.getValue());
                             }
                         }, sensorA);
-                        agent1.addProcess(new br.edu.leonardo.jaf.Process() {
+                        agent1.addBehaviour(new Behaviour() {
                             @Override
                             public void execute(SensorNotification notification) {
                                 frame.updateBetaParkInfo((KhompNITZSensorValue)notification.getValue());
                             }
                         }, sensorB);
-                        agent1.addProcess(new br.edu.leonardo.jaf.Process() {
+                        agent1.addBehaviour(new Behaviour() {
                             @Override
                             public void execute(SensorNotification notification) {
                                 frame.updateDowntownTemp((SingleSensorValue)notification.getValue());
                             }
                         }, sensorCTemp);
-                        agent1.addProcess(new br.edu.leonardo.jaf.Process() {
+                        agent1.addBehaviour(new Behaviour() {
                             @Override
                             public void execute(SensorNotification notification) {
                                 frame.updateDowntownHumidity((SingleSensorValue)notification.getValue());
@@ -87,7 +88,7 @@ public class Main {
                         ParkingSensor[] pSensors = new ParkingSensor[7];
                         for(int i = 0; i < pSensors.length; i++) {
                             pSensors[i] = new ParkingSensor("PARKING"+(i+1), subscriber);
-                            agent1.addProcess(new ParkingProcess(frame, i+1), pSensors[i]);
+                            agent1.addBehaviour(new ParkingProcess(frame, i+1), pSensors[i]);
                         }
                         
                         // Initialize the agent
@@ -127,7 +128,7 @@ public class Main {
     /**
      * A process that is executed when a parking sensor notifies values.
      */
-    private static class ParkingProcess implements br.edu.leonardo.jaf.Process {
+    private static class ParkingProcess implements br.edu.leonardo.jaf.Behaviour {
 
         private final MainWindow frame;
         private final int spaceNo;
