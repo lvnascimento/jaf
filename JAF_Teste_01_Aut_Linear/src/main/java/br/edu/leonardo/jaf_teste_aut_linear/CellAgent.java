@@ -2,6 +2,7 @@ package br.edu.leonardo.jaf_teste_aut_linear;
 
 import br.edu.leonardo.jaf.Agent;
 import br.edu.leonardo.jaf.AgentException;
+import br.edu.leonardo.jaf.Behaviour;
 import br.edu.leonardo.jaf.sensors.SensorNotification;
 
 /**
@@ -116,8 +117,8 @@ public abstract class CellAgent<T> extends Agent {
 
     @Override
     protected void setup() throws AgentException {
-        addProcess(
-                new br.edu.leonardo.jaf.Process() {
+        addBehaviour(
+                new Behaviour() {
                     @Override
                     public void execute(SensorNotification notification) {
                         nextState = generateNextState(
