@@ -2,6 +2,7 @@ package br.edu.leonardo.jaf_moving_simulation;
 
 import br.edu.leonardo.jaf.sensors.BooleanSensorValue;
 import br.edu.leonardo.jaf.Agent;
+import br.edu.leonardo.jaf.Behaviour;
 import br.edu.leonardo.jaf.sensors.SensorNotification;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class SimulatedRobot extends Agent {
         
         IterationSensor iterSensor = new IterationSensor(this, iterationPeriod, environment);
         
-        addProcess(new br.edu.leonardo.jaf.Process() {
+        addBehaviour(new Behaviour() {
             @Override
             public void execute(SensorNotification notification) {
                 if(notification.getValue() == BooleanSensorValue.TRUE)
