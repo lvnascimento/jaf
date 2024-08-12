@@ -29,7 +29,7 @@ public abstract class Sensor {
      * @param listener The desired listener.
      */
     public void addListener(NotificationListener listener) {
-        observers.add(listener);
+        listeners.add(listener);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public abstract class Sensor {
      */
     protected final void newReading(SensorValue value) {
         SensorNotification notif = new SensorNotification(this, value);
-        for (NotificationListener obs : observers) {
+        for (NotificationListener obs : listeners) {
             obs.notify(notif);
         }
     }
@@ -57,10 +57,10 @@ public abstract class Sensor {
      * @param exception The exception related to the reported error.  
      */
     protected void reportFatalError(Throwable exception) {
-        for(NotificationListener listener : observers) {
+        for(NotificationListener listener : listeners) {
             listener.onFatalError(new SensorException(this, exception));
         }
-        observers.clear();
+        listeners.clear();
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,5 +70,5 @@ public abstract class Sensor {
     /**
      * The set of listeners added to this sensor.
      */
-    private final Set<NotificationListener> observers = new HashSet();
+    private final Set<NotificationListener> listeners = new HashSet();
 }

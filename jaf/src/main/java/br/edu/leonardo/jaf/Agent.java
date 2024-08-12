@@ -26,16 +26,16 @@ public class Agent {
 
     /**
      * This constructor builds a new Agent that uses a pool of unlimited cached threads to execute
-     * its processes.
+     * its behaviours.
      */
     public Agent(){
         this(false);
     }
 
     /**
-     * This constructor builds a new Agent that uses a pool of threads to execute its processes.
-     * The pool can use a single thread (the processes are executed one after each other, in a queue)
-     * or in a unlimited cache pool (if there is an available thread in the pool, a new process use
+     * This constructor builds a new Agent that uses a pool of threads to execute its behaviours.
+     * The pool can use a single thread (the behaviours are executed one after each other, in a queue)
+     * or in a unlimited cache pool (if there is an available thread in the pool, a new behaviour use
      * it; otherwise a new thread is created - each thread is kept in the pool for 60 seconds).
      *
      * @param singleThread True if the agent must use a single thread pool; false otherwise.
@@ -49,9 +49,9 @@ public class Agent {
 
     /**
      * This constructor builds a new Agent that uses a fixed pool of threads to execute its
-     * processes. The pool's size is specified at the given argument. A predefined number of threads
-     * is created and receives processes on demand. If a process is created but there are no
-     * available threads in the pool, the process must wait in a queue for execution.
+     * behaviours. The pool's size is specified at the given argument. A predefined number of threads
+     * is created and receives behaviours on demand. If a behaviour is created but there are no
+     * available threads in the pool, the behaviour must wait in a queue for execution.
      *
      * @param numOfThreads The size of the pool (the value must be positive).
      * @throws IllegalArgumentException If a negative value is informed in numOfThreads argument.
@@ -70,7 +70,7 @@ public class Agent {
     /**
      * This method adds a new sensor to this agent. A sensor is a component that allows an agent to
      * obtain information from the environment. A sensor is an optional component of an agent. An
-     * individual agent can have one or more sensors. A process should be added to the agent and
+     * individual agent can have one or more sensors. A behaviour should be added to the agent and
      * related to the sensor to do something when a new sensor value is notified.
      *
      * @param sensor The new sensor reference. If the sensor has already been added to the agent,
@@ -96,20 +96,20 @@ public class Agent {
     }
 
     /**
-     * This method adds a new process to this agent that will be executed when the sensor s notifies
+     * This method adds a new Behaviour to this agent that will be executed when the sensor s notifies
      * new values. If the sensor s has not been added to the agent, this method adds s as a new
      * sensor.
      *
-     * @param p The reference to the new process.
-     * @param s The Sensor reference related to the process.
+     * @param b The reference to the new behaviour.
+     * @param s The Sensor reference related to the behaviour.
      */
-    public void addProcess(Process p, Sensor s) {
+    public void addBehaviour(Behaviour b, Sensor s) {
         SensorEntry entry = sensors.get(s);
         if(entry == null) { // If the agent does not contain the sensor s, add it to the agent.
             addSensor(s);
             entry = sensors.get(s);
         }
-        entry.addRelatedProcess(p);
+        entry.addRelatedBehaviour(b);
     }
 
     /**
@@ -183,59 +183,59 @@ public class Agent {
 
     /**
      * The agent uses this internal method to process a new notification received from a sensor.
-     * This method execute all processes related to the sensor that sends the notification.
+     * This method execute all behaviours related to the sensor that sends the notification.
      *
      * @param notification The received notification.
      */
     private void notifyNewSensorReading(SensorNotification notification) {
-        // Search processes related to the sensor that sent the notification.
-        Set<Process> filteredProcesses = searchProcesses(notification);
+        // Search behavious related to the sensor that sent the notification.
+        Set<Behaviour> filteredBehaviours = searchBehaviours(notification);
 
-        // Execute each process
-        for (Process p : filteredProcesses) {
-            executeProcess(p, notification);
+        // Execute each behaviour
+        for (Behaviour b : filteredBehaviours) {
+            executeBehaviour(b, notification);
         }
     }
 
     /**
-     * This method searches for processes that are related to the sensor that sent the given
+     * This method searches for behaviours that are related to the sensor that sent the given
      * notification.
      *
      * @param notification The notification.
-     * @return A set of processes. A empty set will be returned if there are no processes related
+     * @return A set of behaviours. A empty set will be returned if there are no behaviours related
      * to the given sensor.
      */
-    private Set<Process> searchProcesses(SensorNotification notification) {
+    private Set<Behaviour> searchBehaviours(SensorNotification notification) {
         SensorEntry entry = sensors.get(notification.getSensor());
-        return entry == null ? new HashSet<>() : entry.getRelatedProcesses();
+        return entry == null ? new HashSet<>() : entry.getRelatedBehaviours();
     }
 
     /**
-     * This method executes the given process p that will process the given sensor notification. The
-     * process will be executed in a separated thread. The thread will finish when the process
-     * finish or when it will be interrupted.
+     * This method executes the given behaviour b that will process the given sensor notification. The
+     * behaviour will be executed in a separated thread. The thread will finish when the behaviour
+     * finishes or when it will be interrupted.
      *
-     * @param p The desired process.
+     * @param b The desired behaviour.
      * @param notification The received sensor notification.
      */
-    private void executeProcess(Process p, SensorNotification notification) {
-        // Create a Runnable to execute the process in a separated thread.
+    private void executeBehaviour(Behaviour b, SensorNotification notification) {
+        // Create a Runnable to execute the behaviour in a separated thread.
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                p.execute(notification);
+                b.execute(notification);
 
-                // Remove the process Future from the processes map when the runnable finishes.
-                processesThreads.remove(p);
+                // Remove the behaviour Future from the behaviours map when the runnable finishes.
+                behavioursThreads.remove(b);
             }
         };
 
-        // Add the process runnable to the thread pool for execution.
+        // Add the behaviour runnable to the thread pool for execution.
         Future<?> f = threadExecService.submit(r);
 
-        // Put the returned Future object in the processes map. This object allows future
-        // manipulations of the process thread.
-        processesThreads.put(p, f);
+        // Put the returned Future object in the behaviours map. This object allows future
+        // manipulations of the behaviour thread.
+        behavioursThreads.put(b, f);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,15 +249,15 @@ public class Agent {
     private final Map<Sensor,SensorEntry> sensors = new HashMap<>();
 
     /**
-     * The executor service that manage the thread pool used to execute the agent processes.
+     * The executor service that manage the thread pool used to execute the agent behaviours.
      */
     private final ExecutorService threadExecService;
 
     /**
-     * The map of future objects used to interact with the threads used to execute each process in
+     * The map of future objects used to interact with the threads used to execute each behaviour in
      * the agent.
      */
-    private Map<Process, Future<?>> processesThreads = new HashMap<>();
+    private final Map<Behaviour, Future<?>> behavioursThreads = new HashMap<>();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // P R I V A T E   I N T E R N A L   C L A S S E S
@@ -286,13 +286,13 @@ public class Agent {
         //////////////////////////////////////////////////////////////////////////////////////////
 
         /**
-         * This method adds a process to this entry. When a process is added to an entry, it will
+         * This method adds a behaviour to this entry. When a behaviour is added to an entry, it will
          * be executed by the agent when the sensor related to that entry notifies new values.
          *
-         * @param p The desired process.
+         * @param b The desired behaviour.
          */
-        public void addRelatedProcess(Process p) {
-            relatedProcesses.add(p);
+        public void addRelatedBehaviour(Behaviour b) {
+            relatedBehaviours.add(b);
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -309,13 +309,13 @@ public class Agent {
         }
 
         /**
-         * This method returns the set of processes in this entry. These processes should be executed
+         * This method returns the set of behaviours in this entry. These behaviours should be executed
          * when the sensor related to this entry notifies a new value.
          *
-         * @return The set of processes.
+         * @return The set of behaviours.
          */
-        public Set<Process> getRelatedProcesses() {
-            return relatedProcesses;
+        public Set<Behaviour> getRelatedBehaviours() {
+            return relatedBehaviours;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -328,9 +328,9 @@ public class Agent {
         private final Sensor sensor;
 
         /**
-         * The set of processes in this entry and that be executed when the sensor notifies a new
+         * The set of behaviours in this entry and that be executed when the sensor notifies a new
          * value.
          */
-        private final Set<Process> relatedProcesses = new HashSet<>();
+        private final Set<Behaviour> relatedBehaviours = new HashSet<>();
     }
 }
